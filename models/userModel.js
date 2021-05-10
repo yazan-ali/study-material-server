@@ -27,10 +27,6 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Quiz"
     }],
-    documents: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Document"
-    }],
     posts: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Post",
