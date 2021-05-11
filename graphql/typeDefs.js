@@ -45,6 +45,7 @@ type User{
     isAdmin: Boolean!
     token: String!
     quizizz: [Quiz!]
+    posts: [Post!]
     documents: [Document!]
     up_voted_quiz:[Quiz!]
     down_voted_quiz:[Quiz!]

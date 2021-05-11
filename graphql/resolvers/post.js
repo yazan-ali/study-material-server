@@ -40,7 +40,11 @@ module.exports = {
             const newPost = new Post({
                 body: body,
                 image: image,
-                createdBy: user.id,
+                createdBy: {
+                    username: user.username,
+                    first_name: user.first_name,
+                    last_name: user.last_name,
+                },
                 createdAt: new Date().toISOString()
             });
             const post = await newPost.save();

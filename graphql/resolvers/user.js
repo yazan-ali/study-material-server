@@ -20,7 +20,7 @@ module.exports = {
     Query: {
         async getUser(_, { username }) {
             try {
-                const user = await User.findOne({ username: username }).populate('quizizz').populate("posts");
+                const user = await User.findOne({ username: username }).populate('quizizz').populate('posts');
                 if (user) {
                     return user;
                 } else {
