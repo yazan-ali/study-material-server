@@ -107,11 +107,16 @@ type Like{
     username: String!
 }
 
+type SearchResult{
+    searchType: String!
+    searchName: String!
+}
+
 type Query{
     getQuizizz: [Quiz!]
     getQuizizzByCourseName(course_name: String!): [Quiz!]
     getQuiz(quizId: ID!): Quiz!
-    getCourseName: [String!]
+    getSearchOptions: [SearchResult!]
     getUser(username: String!): User!
     getPosts: [Post!]
     getPost(postId: ID!): Post!

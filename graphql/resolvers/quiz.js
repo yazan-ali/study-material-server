@@ -33,17 +33,48 @@ module.exports = {
             } catch (err) {
                 throw new Error(err);
             }
-        }, async getCourseName() {
+        },
+        // async getCourseName() {
+        //     try {
+        //         const quizizz = await Quiz.find({});
+        //         const course_name_arr = [];
+        //         quizizz.map(q => {
+        //             if (course_name_arr.includes(q.course_name)) return
+        //             else {
+        //                 course_name_arr.push(q.course_name)
+        //             }
+        //         });
+        //         return course_name_arr;
+        //     } catch (err) {
+        //         throw new Error(err);
+        //     }
+        // },
+        async getSearchOptions() {
             try {
                 const quizizz = await Quiz.find({});
-                const course_name_arr = [];
+                const users = await User.find({});
+                const searchOptions = [];
                 quizizz.map(q => {
-                    if (course_name_arr.includes(q.course_name)) return
+                    if (searchOptions.includes(q.course_name)) return
                     else {
-                        course_name_arr.push(q.course_name)
+                        searchOptions.push({
+                            searchType: "course_name",
+                            searchName: q.course_name
+                        }
+                        )
                     }
                 });
-                return course_name_arr;
+                users.map(u => {
+                    if (searchOptions.includes(u.username)) return
+                    else {
+                        searchOptions.push({
+                            searchType: "user",
+                            searchName: u.username
+                        }
+                        )
+                    }
+                });
+                return searchOptions;
             } catch (err) {
                 throw new Error(err);
             }
