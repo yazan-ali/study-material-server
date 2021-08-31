@@ -44,6 +44,7 @@ type User{
     major: String!
     isAdmin: Boolean!
     token: String!
+    image: String
     quizizz: [Quiz!]
     posts: [Post!]
     documents: [Document!]
@@ -58,6 +59,7 @@ input RegisterInput {
     password: String!
     university: String
     major: String
+    image: String
     isAdmin: Boolean!
 }
 
@@ -99,6 +101,7 @@ type Comment{
     first_name: String!
     last_name: String!
     username: String!
+    user_image: String
     body: String!
 }
 
@@ -124,6 +127,7 @@ type Query{
 type Mutation{
     register(registerInput: RegisterInput): User!
     login(username: String!, password: String!): User!
+    updataProfileImage(image: String!, id: ID!): User!
     createQuiz(quizInput: QuizInput): Quiz!
     updateQuiz(quizId: ID!, quizInput: QuizInput): Quiz!
     deleteQuiz(quizId: ID!): String!

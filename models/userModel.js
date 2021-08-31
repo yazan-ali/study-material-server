@@ -23,6 +23,7 @@ const userSchema = new mongoose.Schema({
     },
     university: String,
     major: String,
+    image: String,
     quizizz: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Quiz"

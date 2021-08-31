@@ -1,10 +1,10 @@
 const Post = require("../../models/postModel");
+const Comment = require("../../models/commentModel");
 const checkAuth = require("../../util/checkAuth");
 const { UserInputError, AuthenticationError } = require("apollo-server");
 
 module.exports = {
     Mutation: {
-        // using arrow functions
         createComment: async (_, { postId, body }, context) => {
             const user = checkAuth(context);
             if (body.trim() === "") {
@@ -14,17 +14,27 @@ module.exports = {
                     }
                 });
             }
+
+            const newComment = {
+                body: body,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                username: user.username,
+                user_image: user.image,
+                createdAt: new Date().toISOString()
+            }
+
+            const comment = new Comment(newComment);
+            await comment.save();
+
             const post = await Post.findById(postId);
+
+
             if (post) {
-                post.comments.unshift({
-                    body: body,
-                    first_name: user.first_name,
-                    last_name: user.last_name,
-                    username: user.username,
-                    createdAt: new Date().toISOString()
-                })
+                post.comments.unshift(comment._id)
                 await post.save();
-                return post;
+
+                return await Post.findById(postId).populate("comments");
             } else {
                 throw new UserInputError("Post not found");
             }
@@ -39,52 +49,21 @@ module.exports = {
                     }
                 });
             }
-            const post = await Post.findById(postId);
-            if (post) {
-                const commentIdx = post.comments.findIndex(c => c.id === commentId);
-                if (post.comments[commentIdx].username === user.username) {
-                    const updatedComments = post.comments.map(c => {
-                        if (c.id === commentId) {
-                            const newComment = {
-                                id: c.id,
-                                createdAt: c.createdAt,
-                                first_name: c.first_name,
-                                last_name: c.last_name,
-                                username: c.username,
-                                body: body
-                            }
-                            return newComment;
-                        } else {
-                            return c;
-                        }
-                    });
-                    post.comments = updatedComments;
-                    await post.save();
-                    return post;
-                } else {
-                    throw new AuthenticationError("Action not allowed")
-                }
-            } else {
-                throw new UserInputError("Post not found");
-            }
+
+            const comment = await Comment.findOne({ _id: commentId });
+            comment.body = body
+            await comment.save();
+
+            const post = await Post.findById(postId).populate("comments");
+            return post;
         },
         deleteComment: async (_, { postId, commentId }, context) => {
             const user = checkAuth(context);
 
-            const post = await Post.findById(postId);
-            if (post) {
-                const commentIdx = post.comments.findIndex(c => c.id === commentId);
-                if (post.comments[commentIdx].username = user.username) {
-                    post.comments.splice(commentIdx, 1);
-                    await post.save();
-                    return post;
-                } else {
-                    throw new AuthenticationError("Action not allowed");
-                }
-            } else {
-                throw new UserInputError("Post not found");
-            }
 
+            await Comment.findByIdAndDelete(commentId);
+
+            return await Post.findById(postId).populate("comments");
         }
     }
 }

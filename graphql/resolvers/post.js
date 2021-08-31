@@ -8,7 +8,7 @@ module.exports = {
     Query: {
         async getPosts() {
             try {
-                const posts = await Post.find({}).sort({ createdAt: -1 }).populate("createdBy");
+                const posts = await Post.find({}).sort({ createdAt: -1 }).populate("comments");
                 return posts;
             } catch (err) {
                 throw new Error(err);
@@ -16,7 +16,7 @@ module.exports = {
         },
         async getPost(_, { postId }) {
             try {
-                const post = await Post.findById(postId).populate("createdBy");
+                const post = await Post.findById(postId).populate("comments");
                 if (post) {
                     return post;
                 } else {
@@ -44,6 +44,7 @@ module.exports = {
                     username: user.username,
                     first_name: user.first_name,
                     last_name: user.last_name,
+                    image: user.image,
                 },
                 createdAt: new Date().toISOString()
             });

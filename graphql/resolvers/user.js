@@ -1,8 +1,11 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { UserInputError } = require("apollo-server");
+const checkAuth = require("../../util/checkAuth");
 
 const User = require("../../models/userModel");
+const Post = require("../../models/postModel");
+const Comment = require("../../models/commentModel");
 const { validateRegisterInput, validateLoginInput } = require("../../util/validators");
 
 function generateToken(user) {
@@ -11,7 +14,8 @@ function generateToken(user) {
         first_name: user.first_name,
         last_name: user.last_name,
         username: user.username,
-        isAdmin: user.isAdmin
+        isAdmin: user.isAdmin,
+        image: user.image,
     }, process.env.TOKEN_SECRETE, { expiresIn: "1h" }
     )
 }
@@ -20,7 +24,12 @@ module.exports = {
     Query: {
         async getUser(_, { username }) {
             try {
-                const user = await User.findOne({ username: username }).populate('quizizz').populate('posts');
+                const user = await User.findOne({ username: username }).populate('quizizz').populate({
+                    path: "posts",
+                    populate: {
+                        path: "comments"
+                    }
+                });
                 if (user) {
                     return user;
                 } else {
@@ -62,7 +71,7 @@ module.exports = {
                 token
             }
         },
-        async register(_, { registerInput: { first_name, last_name, username, password, university, major, isAdmin } }, context, info) {
+        async register(_, { registerInput: { first_name, last_name, username, password, university, major, isAdmin, image } }, context, info) {
             // Validate user data
             const { valid, errors } = validateRegisterInput(first_name, last_name, username, password,);
             if (!valid) {
@@ -87,7 +96,8 @@ module.exports = {
                 password: password,
                 university: university,
                 major: major,
-                isAdmin: isAdmin
+                isAdmin: isAdmin,
+                image: image
             });
             const result = await newUser.save();
 
@@ -97,6 +107,42 @@ module.exports = {
                 id: result._id,
                 token
             }
-        }
+        },
+        async updataProfileImage(_, { image, id }, context) {
+            const user = checkAuth(context);
+
+            if (user) {
+                const result = await User.findOne({ username: user.username });
+
+                result.image = image
+                await result.save();
+
+                const createdByData = {
+                    first_name: result.first_name,
+                    last_name: result.last_name,
+                    username: result.username,
+                    image: result.image
+                }
+                // change user posts image (profile image) that saved with posts
+                Post.updateMany({ 'createdBy.username': user.username },
+                    { createdBy: createdByData }, function (err, docs) {
+                        if (err) {
+                            console.log(err)
+                        }
+                    })
+
+                Comment.updateMany({ username: user.username },
+                    { user_image: result.image }, function (err, docs) {
+                        if (err) {
+                            console.log(err)
+                        }
+                    })
+
+                return result;
+            } else {
+                throw new UserInputError("User not found");
+            }
+
+        },
     }
 }

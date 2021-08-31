@@ -34,21 +34,6 @@ module.exports = {
                 throw new Error(err);
             }
         },
-        // async getCourseName() {
-        //     try {
-        //         const quizizz = await Quiz.find({});
-        //         const course_name_arr = [];
-        //         quizizz.map(q => {
-        //             if (course_name_arr.includes(q.course_name)) return
-        //             else {
-        //                 course_name_arr.push(q.course_name)
-        //             }
-        //         });
-        //         return course_name_arr;
-        //     } catch (err) {
-        //         throw new Error(err);
-        //     }
-        // },
         async getSearchOptions() {
             try {
                 const quizizz = await Quiz.find({});
