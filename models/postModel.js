@@ -33,17 +33,19 @@ const postSchema = new mongoose.Schema({
     createdAt: String,
     image: String,
     comments: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Comments",
+        body: String,
+        createdBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+        },
+        createdAt: String,
     }],
     likes: [{
         username: String,
     }],
     createdBy: {
-        username: String,
-        first_name: String,
-        last_name: String,
-        image: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
     }
 });
 

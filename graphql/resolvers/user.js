@@ -27,8 +27,13 @@ module.exports = {
                 const user = await User.findOne({ username: username }).populate('quizizz').populate({
                     path: "posts",
                     populate: {
-                        path: "comments"
-                    }
+                        path: "createdBy",
+                    },
+                }).populate({
+                    path: "posts",
+                    populate: {
+                        path: "comments.createdBy",
+                    },
                 });
                 if (user) {
                     return user;
@@ -108,7 +113,7 @@ module.exports = {
                 token
             }
         },
-        async updataProfileImage(_, { image, id }, context) {
+        async updataProfileImage(_, { image }, context) {
             const user = checkAuth(context);
 
             if (user) {
@@ -116,28 +121,6 @@ module.exports = {
 
                 result.image = image
                 await result.save();
-
-                const createdByData = {
-                    first_name: result.first_name,
-                    last_name: result.last_name,
-                    username: result.username,
-                    image: result.image
-                }
-                // change user posts image (profile image) that saved with posts
-                Post.updateMany({ 'createdBy.username': user.username },
-                    { createdBy: createdByData }, function (err, docs) {
-                        if (err) {
-                            console.log(err)
-                        }
-                    })
-
-                Comment.updateMany({ username: user.username },
-                    { user_image: result.image }, function (err, docs) {
-                        if (err) {
-                            console.log(err)
-                        }
-                    })
-
                 return result;
             } else {
                 throw new UserInputError("User not found");

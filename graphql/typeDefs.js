@@ -36,9 +36,9 @@ type Document{
 
 type User{
     id: ID!
-    first_name: String!
-    last_name: String!
-    username: String!
+    first_name: String
+    last_name: String
+    username: String
     password: String!
     university: String!
     major: String!
@@ -98,10 +98,7 @@ type Post{
 type Comment{
     id: ID!
     createdAt: String!
-    first_name: String!
-    last_name: String!
-    username: String!
-    user_image: String
+    createdBy: User!
     body: String!
 }
 
@@ -127,7 +124,7 @@ type Query{
 type Mutation{
     register(registerInput: RegisterInput): User!
     login(username: String!, password: String!): User!
-    updataProfileImage(image: String!, id: ID!): User!
+    updataProfileImage(image: String!): User!
     createQuiz(quizInput: QuizInput): Quiz!
     updateQuiz(quizId: ID!, quizInput: QuizInput): Quiz!
     deleteQuiz(quizId: ID!): String!

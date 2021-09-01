@@ -8,7 +8,7 @@ module.exports = {
     Query: {
         async getPosts() {
             try {
-                const posts = await Post.find({}).sort({ createdAt: -1 }).populate("comments");
+                const posts = await Post.find({}).sort({ createdAt: -1 }).populate("createdBy").populate("comments.createdBy")
                 return posts;
             } catch (err) {
                 throw new Error(err);
@@ -16,7 +16,7 @@ module.exports = {
         },
         async getPost(_, { postId }) {
             try {
-                const post = await Post.findById(postId).populate("comments");
+                const post = await Post.findById(postId).populate("createdBy").populate("comments.createdBy");
                 if (post) {
                     return post;
                 } else {
@@ -40,12 +40,7 @@ module.exports = {
             const newPost = new Post({
                 body: body,
                 image: image,
-                createdBy: {
-                    username: user.username,
-                    first_name: user.first_name,
-                    last_name: user.last_name,
-                    image: user.image,
-                },
+                createdBy: user,
                 createdAt: new Date().toISOString()
             });
             const post = await newPost.save();
@@ -64,7 +59,7 @@ module.exports = {
                 });
             }
 
-            const post = await Post.findById(postId).populate("createdBy");
+            const post = await Post.findById(postId).populate("createdBy").populate("comments.createdBy");
             if (post) {
                 if (post.createdBy.username === user.username) {
                     const updatedPost = {
