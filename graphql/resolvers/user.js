@@ -5,7 +5,6 @@ const checkAuth = require("../../util/checkAuth");
 
 const User = require("../../models/userModel");
 const Post = require("../../models/postModel");
-const Comment = require("../../models/commentModel");
 const { validateRegisterInput, validateLoginInput } = require("../../util/validators");
 
 function generateToken(user) {
