@@ -23,17 +23,21 @@ module.exports = {
     Query: {
         async getUser(_, { username }) {
             try {
-                const user = await User.findOne({ username: username }).populate('quizizz').populate({
-                    path: "posts",
-                    populate: {
-                        path: "createdBy",
-                    },
+                const user = await User.findOne({ username: username }).populate({
+                    path: "quizizz",
+                    options: { sort: { 'createdAt': -1 } },
                 }).populate({
                     path: "posts",
                     populate: {
                         path: "comments.createdBy",
                     },
-                });
+                }).populate({
+                    path: "posts",
+                    options: { sort: { 'createdAt': -1 } },
+                    populate: {
+                        path: "createdBy",
+                    },
+                })
                 if (user) {
                     return user;
                 } else {
