@@ -28,10 +28,15 @@ type Answer{
     answerText: String!
 }
 
-type Document{
-    document_url: String!
+type File{
+    id: ID!
+    file_url: String!
+    uploadId: String!
     uploadedBy: User!
+    createdAt: String!
     course_name: String!
+    file_name: String!
+    downloads: Int!
 }
 
 type User{
@@ -47,7 +52,7 @@ type User{
     image: String
     quizizz: [Quiz!]
     posts: [Post!]
-    documents: [Document!]
+    files: [File!]
     up_voted_quiz:[Quiz!]
     down_voted_quiz:[Quiz!]
 }
@@ -120,6 +125,7 @@ type Query{
     getUser(username: String!): User!
     getPosts: [Post!]
     getPost(postId: ID!): Post!
+    getFiles: [File!]
 }
 type Mutation{
     register(registerInput: RegisterInput): User!
@@ -138,6 +144,8 @@ type Mutation{
     updateComment(postId: ID!, commentId: ID!, body: String!): Post!
     deleteComment(postId: ID!, commentId: ID!): Post!
     likePost(postId: ID!): Post!
+    uploadFile(course_name: String!, file_name: String, file_url: String!, uploadId: String!): File!
+    deleteFile(fileId: ID!): String!
 }
 `
 

@@ -32,6 +32,10 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Post",
     }],
+    files: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "File",
+    }],
     up_voted_quiz: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Quiz",
