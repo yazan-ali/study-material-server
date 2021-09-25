@@ -37,6 +37,9 @@ module.exports = {
                     populate: {
                         path: "createdBy",
                     },
+                }).populate({
+                    path: "files",
+                    options: { sort: { 'createdAt': -1 } }
                 })
                 if (user) {
                     return user;
