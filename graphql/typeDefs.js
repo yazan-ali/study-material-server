@@ -112,6 +112,11 @@ type Like{
     username: String!
 }
 
+type ItemsByCourseName{
+    quizizz: [Quiz!]
+    files: [File!]
+}
+
 type SearchResult{
     searchType: String!
     searchName: String!
@@ -119,7 +124,7 @@ type SearchResult{
 
 type Query{
     getQuizizz: [Quiz!]
-    getQuizizzByCourseName(course_name: String!): [Quiz!]
+    getItemsByCourseName(course_name: String!): ItemsByCourseName!
     getQuiz(quizId: ID!): Quiz!
     getSearchOptions: [SearchResult!]
     getUser(username: String!): User!

@@ -1,4 +1,5 @@
 const Quiz = require("../../models/quizModel");
+const File = require("../../models/fileModel");
 const User = require("../../models/userModel");
 const checkAuth = require("../../util/checkAuth");
 
@@ -9,14 +10,6 @@ module.exports = {
         async getQuizizz() {
             try {
                 const quizizz = await Quiz.find({}).sort({ createdAt: -1 });
-                return quizizz;
-            } catch (err) {
-                throw new Error(err);
-            }
-        },
-        async getQuizizzByCourseName(_, { course_name }) {
-            try {
-                const quizizz = await Quiz.find({ course_name: course_name }).sort({ createdAt: -1 });
                 return quizizz;
             } catch (err) {
                 throw new Error(err);
@@ -60,6 +53,19 @@ module.exports = {
                     }
                 });
                 return searchOptions;
+            } catch (err) {
+                throw new Error(err);
+            }
+        },
+        async getItemsByCourseName(_, { course_name }) {
+            try {
+                const quizizz = await Quiz.find({ course_name: course_name }).sort({ createdAt: -1 });
+                const files = await File.find({ course_name: course_name }).sort({ createdAt: -1 });
+                const searchResult = {
+                    quizizz,
+                    files
+                }
+                return searchResult;
             } catch (err) {
                 throw new Error(err);
             }
@@ -208,6 +214,6 @@ module.exports = {
             } catch (err) {
                 throw new Error(err);
             }
-        }
+        },
     }
 }
